@@ -11,9 +11,8 @@ const userSchema = new mongoose.Schema(
     name: {
       type: String,
       required: [true, "user name is required"],
-      unique: [true, "category must be unique"],
-      minlength: [3, "Too short category name"],
-      maxlength: [30, "Too long category name"],
+      minlength: [3, "Too short User name"],
+      maxlength: [30, "Too long User name"],
     },
     slug: {
       type: String,
