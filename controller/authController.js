@@ -87,6 +87,43 @@ exports.verify2FA = asyncHandler(async (req, res, next) => {
   res.status(200).json({ data: sanitize.sanitizeUser(user), token });
 });
 
+exports.resend2FACode = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+
+  const user = await userModel.findOne({ email });
+
+  if (!user) {
+    return next(new ApiError("User not found.", 404));
+  }
+
+  if (user.active === false) {
+    return next(
+      new ApiError(
+        "Your account is not active, please contact the administrator.",
+        403
+      )
+    );
+  }
+
+  const OTP = crypto.randomInt(100000, 999999);
+
+  user.twoFactorCode = OTP;
+  user.twoFactorExpires = Date.now() + 5 * 60 * 1000;
+  await user.save();
+
+  const options = {
+    email: user.email,
+    subject: "Your new 2FA Code",
+    message: `Your new verification code is ${OTP}. It will expire in 5 minutes.`,
+  };
+
+  await sendEmails(options);
+
+  res.status(200).json({
+    message: "New verification code has been sent to your email.",
+  });
+});
+
 exports.protect = asyncHandler(async (req, res, next) => {
   let token;
   if (

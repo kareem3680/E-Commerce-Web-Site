@@ -109,3 +109,13 @@ exports.verify2FA = [
     .withMessage("OTP must be a 6-digit number"),
   validatorMiddleWare,
 ];
+
+exports.resend2FA = [
+  check("email")
+    .notEmpty()
+    .withMessage("Email is required")
+    .isEmail()
+    .withMessage("Invalid email format"),
+
+  validatorMiddleWare,
+];
