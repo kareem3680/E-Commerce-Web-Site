@@ -1,4 +1,5 @@
 const dotenv = require("dotenv");
+const { OAuth2Client } = require("google-auth-library");
 const JWT = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const crypto = require("crypto");
@@ -52,6 +53,47 @@ exports.signUp = asyncHandler(async (req, res, next) => {
   });
   const token = createToken(user._id);
   res.status(201).json({ data: sanitize.sanitizeUser(user), token });
+});
+
+exports.googleAuth = asyncHandler(async (req, res, next) => {
+  const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  const { idToken } = req.body;
+
+  const ticket = await client.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT_ID,
+  });
+
+  const payload = ticket.getPayload();
+  const { email, name, sub: googleId } = payload;
+
+  if (!email || !googleId) {
+    return next(new ApiError("Invalid Google token", 400));
+  }
+
+  let user = await userModel.findOne({ email });
+
+  if (user && !user.googleId) {
+    return next(
+      new ApiError(
+        "Email already used with password. Please login manually.",
+        400
+      )
+    );
+  }
+
+  if (!user) {
+    user = await userModel.create({
+      name,
+      email,
+      googleId,
+      active: true,
+    });
+  }
+
+  const token = createToken(user._id);
+
+  res.status(200).json({ data: sanitize.sanitizeUser(user), token });
 });
 
 exports.verify2FA = asyncHandler(async (req, res, next) => {

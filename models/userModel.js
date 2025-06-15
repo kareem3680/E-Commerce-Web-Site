@@ -78,6 +78,9 @@ const userSchema = new mongoose.Schema(
         postalCode: String,
       },
     ],
+    googleId: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
