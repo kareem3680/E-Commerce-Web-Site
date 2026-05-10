@@ -1,282 +1,269 @@
-# 🏗️ E-Commerce - Backend System
+# E-Commerce Website - API Documentation
 
-A **modern, E-Commerce - Backend System** built with **Node.js**, **Express**, and **MongoDB**.  
-Designed as a **modular monolith** with **enterprise-grade architecture** and **performance optimization**.
+## Overview
 
----
-
-### 🔗 Quick Links
-
-- [🌐 Production API](https://e-commerce-web-site-ten.vercel.app)
-- [💻 Local API](http://localhost:3000)
+This API is designed for the **E-Commerce Website Platform**.  
+It is a complete backend infrastructure for online shopping platforms managing products, users, carts, and orders.
 
 ---
 
-## 📋 Table of Contents
+# Common Features
 
-- [Overview](#-overview)
-- [Architecture](#-architecture)
-- [Quick Start](#-quick-start)
-- [API Documentation](#-api-documentation)
-- [Modules](#-modules)
-- [Development](#-development)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Acknowledgments](#-acknowledgments)
+All list endpoints support the following features:
 
----
-
-## 🎯 Overview
-
-**E-Commerce System** provides a complete backend infrastructure for online shopping platforms — managing products, users, carts, and orders seamlessly.
-It’s built with modern Node.js practices and designed for performance, security, and scalability.
-
-### ✨ Key Features
-
-- 🔐 **JWT-based Authentication & Authorization**
-- 🏗️ **Modular Monolith Architecture**
-- 🛡️ **Enterprise Security Middlewares**
-- 📊 **Advanced Filtering & Pagination**
-- 🔍 **Full-text Search Capabilities**
-- 📝 **Input Validation & Sanitization**
-- ⚡ **High Performance Optimization**
-- 🚀 **Ready for Cloud Hosting**
+| Feature         | Description                   | Example                            |
+| --------------- | ----------------------------- | ---------------------------------- |
+| Pagination      | Split results into pages      | `?page=2&limit=20`                 |
+| Sorting         | Sort results by a field       | `?sort=-createdAt` or `?sort=name` |
+| Field Selection | Return only specific fields   | `?fields=name,email,phone`         |
+| Filtering       | Filter results by exact match | `?status=active&role=admin`        |
+| Range Filtering | Filter by numeric ranges      | `?price[lte]=1000&price[gte]=100`  |
+| Date Range      | Filter by date interval       | `?from=2025-01-01&to=2025-12-31`   |
+| Search          | Text search in string fields  | `?keyword=iphone`                  |
 
 ---
 
-## 🏛️ Architecture
+# Authentication Module
 
-```bash
-e-commerce-backend/
-│
-├── 📁 config/              # Configuration files
-│   ├── database.js
-│   └── environment.js
-│
-├── 📁 controllers/         # Business logic handlers
-│   ├── authController.js
-│   ├── productController.js
-│   ├── orderController.js
-│   └── userController.js
-│
-├── 📁 models/              # Mongoose models
-│   ├── userModel.js
-│   ├── productModel.js
-│   ├── orderModel.js
-│   └── cartModel.js
-│
-├── 📁 routes/              # Route definitions
-│   ├── authRoute.js
-│   ├── productRoute.js
-│   ├── orderRoute.js
-│   └── userRoute.js
-│
-├── 📁 middleWares/         # Express middlewares
-│   ├── authMiddleware.js
-│   ├── errorMiddleware.js
-│   └── uploadMiddleware.js
-│
-├── 📁 validators/          # Joi validation schemas
-│   ├── productValidator.js
-│   ├── userValidator.js
-│   └── orderValidator.js
-│
-├── 📁 utils/               # Utility functions
-│   ├── apiError.js
-│   ├── apiFeatures.js
-│   └── catchAsync.js
-│
-├── 🚀 index.js             # App entry point
-├── 📄 package.json
-└── 🔧 .env.example
-```
-
-yaml
-Copy code
-
-### 🧠 Technology Stack
-
-| Layer          | Technology                      |
-| -------------- | ------------------------------- |
-| Runtime        | Node.js 18+                     |
-| Framework      | Express.js 4.x                  |
-| Database       | MongoDB (Mongoose)              |
-| Authentication | JWT (JSON Web Tokens)           |
-| Security       | Helmet, HPP, Express Rate Limit |
-| Validation     | Joi                             |
+| Endpoint                         | Method | Description                               |
+| -------------------------------- | ------ | ----------------------------------------- |
+| `/api/v1/auth/signUp`            | POST   | Register a new user                      |
+| `/api/v1/auth/signUp-google`     | POST   | Register using Google (idToken)          |
+| `/api/v1/auth/logIn`             | POST   | Login                                    |
+| `/api/v1/auth/verify-2FA`        | POST   | Verify two-factor authentication code    |
+| `/api/v1/auth/resend-2FA`        | POST   | Resend two-factor authentication code    |
 
 ---
 
-## 🚀 Quick Start
+# Forget Password Module (OTP)
 
-### Prerequisites
+| Endpoint                                 | Method | Description                       |
+| ---------------------------------------- | ------ | --------------------------------- |
+| `/api/v1/forgetPassword/sendResetCode`   | POST   | Send reset code to email          |
+| `/api/v1/forgetPassword/verifyResetCode` | POST   | Verify reset code                 |
+| `/api/v1/forgetPassword/resetPassword`   | PUT    | Reset password after verification |
 
-- Node.js 18+
-- MongoDB Atlas or local MongoDB
-- npm or yarn package manager
+---
 
-### Installation
+# Admin Dashboard Module
 
-#### 1️⃣ Clone Repository
+| Endpoint                         | Method | Description                          |
+| -------------------------------- | ------ | ------------------------------------ |
+| `/api/v1/admin`                  | POST   | Create a new user (admin only)       |
+| `/api/v1/admin`                  | GET    | Get all users (paginated)            |
+| `/api/v1/admin/{userId}`         | GET    | Get specific user                    |
+| `/api/v1/admin/{userId}`         | PUT    | Update user                          |
+| `/api/v1/admin/changePassword`   | PUT    | Change user password (admin)         |
+| `/api/v1/admin/{userId}`         | DELETE | Delete user                          |
 
-```bash
-git clone https://github.com/your-username/se-commerce-backend.git
-cd e-commerce-backend
-2️⃣ Install Dependencies
-bash
-Copy code
-npm install
-3️⃣ Start Application
-Development Mode (auto-reload):
+---
 
-bash
-Copy code
-npm run dev
-Production Mode:
+# User Dashboard Module
 
-bash
-Copy code
-npm start
-✅ Test API
-bash
-Copy code
-curl http://localhost:3000/api/v1/health
-Expected response:
+| Endpoint                               | Method | Description                           |
+| -------------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/users/getMyData`              | GET    | Get current user data                |
+| `/api/v1/users/updateMyData`           | PUT    | Update current user data             |
+| `/api/v1/users/updateMyPassword`       | PUT    | Change current user password         |
+| `/api/v1/users/deactivateMyUser`       | DELETE | Deactivate current user account      |
 
-json
-Copy code
-{
-  "status": "success",
-  "message": "🚀 E-Commerce System API is running!",
-  "timestamp": "2024-01-15T10:30:00.000Z"
-}
-🌐 API Documentation
-Base URLs
-Environment URL
-Production  https://e-commerce-web-site-ten.vercel.app
-Local http://localhost:3000
+---
 
-Versioning
-All endpoints are prefixed with:
+# Affiliate Dashboard Module
 
-bash
-Copy code
-/api/v1
-🧾 Postman Documentation
-Explore all API endpoints using the included Postman Collection:
+## Affiliate Status
 
-File: PostMan_Collection.json
+| Status       | Description                          |
+| ------------ | ------------------------------------ |
+| `pending`    | Affiliate application pending        |
+| `approved`   | Affiliate approved                   |
+| `rejected`   | Affiliate rejected                   |
+| `suspended`  | Affiliate suspended                  |
 
-🧩 Modules
-🧑 Identity Module
+## Affiliate Endpoints
 
-User Registration & Login
+| Endpoint                                      | Method | Description                           |
+| --------------------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/affiliates/register`                 | POST   | Register as affiliate (user required) |
+| `/api/v1/affiliates/dashboard`                | GET    | Get affiliate dashboard statistics    |
+| `/api/v1/affiliates/commissions`              | GET    | Get affiliate commissions             |
+| `/api/v1/affiliates/track-click/{referralCode}` | POST | Track referral click                  |
+| `/api/v1/affiliates/request-payout`           | POST   | Request commission payout             |
+| `/api/v1/affiliates/orders`                   | GET    | Get affiliate orders                  |
 
-JWT Authentication
+---
 
-Password Hashing & Reset
+# Accountant Dashboard Module
 
-🛍️ Product Module
+## Payout Request Status Flow
 
-Product CRUD Operations
+pending -> approved -> paid -> rejected
 
-Categories & Subcategories
+## Accountant Endpoints
 
-Image Uploading
+| Endpoint                                                | Method | Description                           |
+| ------------------------------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/accountants/commission-requests`               | GET    | Get all commission payout requests    |
+| `/api/v1/accountants/commission-requests/{requestId}/review` | PUT | Approve or reject payout request |
+| `/api/v1/accountants/commission-requests/{requestId}/pay` | PUT | Mark request as paid                 |
+| `/api/v1/accountants/affiliate-commissions`             | GET    | Get affiliate commission report       |
+| `/api/v1/accountants/paid-orders`                       | GET    | Get paid orders report                |
 
-🛒 Cart Module
+---
 
-Add/Remove Products
+# Categories Module
 
-Cart Total Calculation
+## Category Endpoints
 
-📦 Order Module
+| Endpoint                        | Method | Description                           |
+| ------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/categories`            | POST   | Create a new category (admin only)    |
+| `/api/v1/categories`            | GET    | Get all categories (paginated)        |
+| `/api/v1/categories/{id}`        | GET    | Get specific category                |
+| `/api/v1/categories/{id}`        | PUT    | Update category (admin only)          |
+| `/api/v1/categories/{id}`        | DELETE | Delete category (admin only)          |
 
-Order Creation & Payment
+---
 
-Order Tracking
+# Products Module
 
-Invoice Generation
+## Product Endpoints
 
-🔧 Development
-Available Scripts
-Command Description
-npm start Start production server
-npm run dev Start development server with nodemon
-npm run lint  Run ESLint for code quality
-npm run format  Format code with Prettier
-npm test  Run test suite
+| Endpoint                        | Method | Description                           |
+| ------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/products`              | POST   | Create a new product (admin only)     |
+| `/api/v1/products`              | GET    | Get all products (paginated, filtered)|
+| `/api/v1/products/{id}`         | GET    | Get specific product                  |
+| `/api/v1/products/{id}`         | PUT    | Update product (admin only)           |
+| `/api/v1/products/{id}`         | DELETE | Delete product (admin only)           |
 
-🧹 Code Standards
-ESLint for linting
+---
 
-Prettier for formatting
+# Coupons Module
 
-RESTful API design
+## Coupon Endpoints
 
-Async/Await for async ops
+| Endpoint                        | Method | Description                           |
+| ------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/coupons`               | POST   | Create a new coupon (admin only)      |
+| `/api/v1/coupons`               | GET    | Get all coupons (paginated)           |
+| `/api/v1/coupons/{id}`          | GET    | Get specific coupon                   |
+| `/api/v1/coupons/{id}`          | PUT    | Update coupon (admin only)            |
+| `/api/v1/coupons/{id}`          | DELETE | Delete coupon (admin only)            |
 
-Modular & reusable codebase
+---
 
-Adding New Modules
-Create new folder in modules/
+# Addresses Module
 
-Add controllers, models, routes, services, and validators
+## Address Endpoints
 
-Mount routes in main app
+| Endpoint                        | Method | Description                           |
+| ------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/addresses`             | POST   | Create a new address                  |
+| `/api/v1/addresses`             | GET    | Get all addresses                     |
+| `/api/v1/addresses/{id}`        | DELETE | Delete address                        |
 
-Update documentation
+---
 
-Example:
+# Wishlists Module
 
-cpp
-Copy code
-modules/
-└── new-module/
-    ├── controllers/
-    ├── models/
-    ├── routes/
-    ├── services/
-    └── validators/
-🤝 Contributing
-We welcome contributions! 🎉
+## Wishlist Endpoints
 
-Development Workflow
-Fork the repository
+| Endpoint                        | Method | Description                           |
+| ------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/wishlists`             | POST   | Add product to wishlist               |
+| `/api/v1/wishlists`             | GET    | Get all wishlist items                |
+| `/api/v1/wishlists/{productId}` | DELETE | Remove product from wishlist          |
 
-Create feature branch:
+---
 
-bash
-Copy code
-git checkout -b feature/amazing-feature
-Commit changes:
+# Reviews Module
 
-bash
-Copy code
-git commit -m "Add amazing feature"
-Push branch:
+## Review Endpoints
 
-bash
-Copy code
-git push origin feature/amazing-feature
-Open Pull Request
+| Endpoint                        | Method | Description                           |
+| ------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/reviews`               | POST   | Create a new review                   |
+| `/api/v1/reviews`               | GET    | Get all reviews (paginated)           |
+| `/api/v1/reviews/{id}`          | GET    | Get specific review                   |
+| `/api/v1/reviews/{id}`          | PUT    | Update review (owner only)            |
+| `/api/v1/reviews/{id}`          | DELETE | Delete review (owner or admin)        |
 
-Code Review
-At least one review required
+---
 
-All tests must pass
+# Product Reviews Module
 
-Documentation updated
+| Endpoint                                      | Method | Description                           |
+| --------------------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/products/{productId}/reviews`        | GET    | Get all reviews for specific product  |
+| `/api/v1/products/{productId}/reviews`        | POST   | Create review for specific product    |
 
-📄 License
-This project is licensed under the MIT License.
-See the LICENSE file for details.
+---
 
-🏆 Acknowledgments
-Built with ❤️ using Express.js and MongoDB
+# Carts Module
 
-Security powered by Helmet and JWT
+## Cart Endpoints
 
-API Documentation with Postman
+| Endpoint                        | Method | Description                           |
+| ------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/carts`                 | GET    | Get all products in cart              |
+| `/api/v1/carts`                 | POST   | Add product to cart                   |
+| `/api/v1/carts/applyCoupon`     | PUT    | Apply coupon to cart                  |
+| `/api/v1/carts/{cartItemId}`    | PUT    | Update product quantity in cart       |
+| `/api/v1/carts/{cartItemId}`    | DELETE | Delete specific product from cart     |
+| `/api/v1/carts`                 | DELETE | Clear entire cart                     |
 
-```
+---
+
+# Orders Module
+
+## Order Status Flow
+
+pending -> processing -> shipped -> delivered -> cancelled
+
+## Order Endpoints
+
+| Endpoint                                      | Method | Description                           |
+| --------------------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/orders/{cartId}`                     | POST   | Create cash order from cart           |
+| `/api/v1/orders/checkout-session/{cartId}`    | GET    | Create Stripe checkout session        |
+| `/api/v1/orders`                              | GET    | Get all orders (paginated)            |
+| `/api/v1/orders/{orderId}`                    | PUT    | Update order status (admin only)      |
+| `/api/v1/orders/{orderId}`                    | DELETE | Delete order (admin only)             |
+
+---
+
+# Settings Module
+
+## Settings Endpoints
+
+| Endpoint                        | Method | Description                           |
+| ------------------------------- | ------ | ------------------------------------- |
+| `/api/v1/settings`              | POST   | Add a new setting (admin only)        |
+| `/api/v1/settings`              | GET    | Get all settings                      |
+| `/api/v1/settings/{id}`         | PUT    | Update setting value (admin only)     |
+
+---
+
+# Authentication
+
+JWT is used for authentication. Most endpoints require a Bearer token in the Authorization header:
+Authorization: Bearer {{JWT}}
+
+text
+
+## Two-Factor Authentication (2FA)
+
+- After login with valid credentials, a 2FA code is sent to the user's email.
+- The user must verify the code using `/api/v1/auth/verify-2FA` to receive the JWT token.
+- The code can be resent using `/api/v1/auth/resend-2FA`.
+
+---
+
+# Notes
+
+- All list endpoints support pagination, sorting, filtering, and search.
+- File uploads (images) use `multipart/form-data`.
+- The `{{mainHost}}` variable should be replaced with your API base URL.
+- Admin endpoints require admin role privileges.
+- Affiliate and accountant roles have specific access to their respective modules.
